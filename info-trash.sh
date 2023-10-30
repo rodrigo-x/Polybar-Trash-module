@@ -1,23 +1,30 @@
 #!/usr/bin/env bash
 
-get_trash() {
-    CHECK=$(du -a "$HOME"/.local/share/Trash/files/ | wc -l );
-    TRASH=$(("$CHECK" - 1));
-    SIZE=$(du -sh "$HOME"/.local/share/Trash/files | awk '{ printf $1}');
-    EFFECTIVE_SIZE=$(du -s "$HOME"/.local/share/Trash/files | awk '{ printf $1}');
-    LIMIT=$(printf 5000000);
+# Info about Trash
+get_trash_info() {
+    local trash_path="$HOME/.local/share/Trash/files"
+    local trash_files=($(find "$trash_path" -type f))
+    local trash_count="${#trash_files[@]}"
+    local trash_size=$(du -sh "$trash_path" | awk '{print $1}')
+    local trash_effective_size=$(du -s "$trash_path" | awk '{print $1}')
+    echo "$trash_count $trash_size $trash_effective_size"
 }
 
-check_trash() {
-    get_trash
+# Status Trash
+display_trash_status() {
+    local limit=5000000
+    local trash_info=($(get_trash_info))
+    local trash_count=${trash_info[0]}
+    local trash_size=${trash_info[1]}
+    local trash_effective_size=${trash_info[2]
 
-    if [[ $EFFECTIVE_SIZE -gt $LIMIT ]]; then
-        echo "%{F#ff5770}%{F#f2f2f2}Very Full %{F#77f2f2f2}$SIZE"
-    elif [[ $TRASH -gt 0 ]]; then
-        echo "%{F#FF8B42} %{F#f2f2f2}Full %{F#77f2f2f2}$SIZE"
+    if [[ $trash_effective_size -gt $limit ]]; then
+        echo "%{F#ff5770}%{F#f2f2f2}Muito cheia %{F#77f2f2f2}$trash_size"
+    elif [[ $trash_count -gt 0 ]]; then
+        echo "%{F#FF8B42} %{F#f2f2f2}Cheia %{F#77f2f2f2}$trash_size"
     else
-        echo "%{F#5DC0FE}%{F#f2f2f2}Empty %{F#77f2f2f2}"
+        echo "%{F#5DC0FE}%{F#f2f2f2}Vazia %{F#77f2f2f2}"
     fi
 }
 
-check_trash
+display_trash_status
