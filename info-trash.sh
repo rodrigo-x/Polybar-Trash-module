@@ -16,7 +16,7 @@ display_trash_status() {
     local trash_info=($(get_trash_info))
     local trash_count=${trash_info[0]}
     local trash_size=${trash_info[1]}
-    local trash_effective_size=${trash_info[2]
+    local trash_effective_size=${trash_info[2]}
 
     if [[ $trash_effective_size -gt $limit ]]; then
         echo "%{F#ff5770}%{F#f2f2f2}Muito cheia %{F#77f2f2f2}$trash_size"
